@@ -9,4 +9,5 @@ def Setup_Config():
     config_file.read(config_file_path)
 
     return config_file.get('settings', 'Mdid', ), \
-           config_file.get('settings', 'Pw'),
+           config_file.get('settings', 'Pw'),\
+           config_file.get('settings','CalendarId')
