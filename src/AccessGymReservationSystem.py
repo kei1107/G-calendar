@@ -10,15 +10,15 @@ import os
 import sys
 
 
-def Access(Mdid, Pw):
+def access(mdid, pw):
     main_url = 'http://133.6.82.138/undou/mudy0010c.php'
 
     options = Options()
     options.binary_location = None
     if os.name == 'posix':
         options.binary_location = '/Applications/Google Chrome Canary.app/Contents/MacOS/Google Chrome Canary'
-    elif os.name == 'nt': \
-            options.binary_location = 'C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe'
+    elif os.name == 'nt':
+        options.binary_location = 'C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe'
 
     if options.binary_location is None:
         print('What\'s your OS ??? ')
@@ -35,8 +35,8 @@ def Access(Mdid, Pw):
     login_id = driver.find_element_by_id('txtMdId')
     login_pw = driver.find_element_by_id('txtPw')
     login_button = driver.find_element_by_id('button')
-    login_id.send_keys(Mdid)
-    login_pw.send_keys(Pw)
+    login_id.send_keys(mdid)
+    login_pw.send_keys(pw)
     login_button.click()
 
     # http://133.6.82.138/undou/mudy0020c.php
@@ -57,6 +57,7 @@ def Access(Mdid, Pw):
 
     html = driver.page_source
     soup = BeautifulSoup(html, 'html.parser')
-    print(soup.prettify())
-    driver.save_screenshot('ss.png')
+    with open('scraping-data/test.html', mode='w', encoding='utf-8') as fw:
+        fw.write(soup.prettify())
     driver.quit()
+    print('Success data scraping.')

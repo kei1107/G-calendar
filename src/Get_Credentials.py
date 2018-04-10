@@ -9,7 +9,7 @@ from oauth2client.file import Storage
 # at ~/.credentials/calendar-python-quickstart.json
 SCOPES = 'https://www.googleapis.com/auth/calendar'
 CLIENT_SECRET_FILE = 'json/client_secret.json'
-APPLICATION_NAME = 'Google Calendar API Python Quickstart'
+APPLICATION_NAME = 'Google Calendar API Python'
 
 def get_credentials():
     """Gets valid user credentials from storage.

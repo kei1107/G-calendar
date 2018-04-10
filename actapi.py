@@ -3,23 +3,22 @@ from __future__ import print_function
 import httplib2
 from apiclient import discovery
 
+from pprint import pprint
 import datetime
-
 import src
 
 # get Nu info
 Mdid, Pw, CalendarId = src.Setup_Config.Setup_Config()
+
 
 # CalendarId = 'l5flhg7ejf0svdv2sc0hun4bis@group.calendar.google.com'
 # CalendarId = 'clavis1107@gmail.com'
 
 
 def main():
-    src.CreateApi.CreateApi()
 
-    return
-    src.AccessGymReservationSystem.Access(Mdid, Pw)
-    return
+    # src.AccessGymReservationSystem.access(Mdid, Pw)
+    bodys = src.CreateApi.create_api(CalendarId)
 
     # setting logger
     logger = src.Setup_Logger.Setup_Logger()
@@ -28,19 +27,10 @@ def main():
     credentials = src.Get_Credentials.get_credentials()
     http = credentials.authorize(httplib2.Http())
     service = discovery.build('calendar', 'v3', http=http)
-
-    now = datetime.datetime.utcnow().isoformat() + 'Z'  # 'Z' indicates UTC time
-    print('Getting the upcoming 10 events')
-    eventsResult = service.events().list(
-        calendarId=CalendarId, timeMin=now, maxResults=10, singleEvents=True,
-        orderBy='startTime').execute()
-    events = eventsResult.get('items', [])
-
-    if not events:
-        print('No upcoming events found.')
-    for event in events:
-        start = event['start'].get('dateTime', event['start'].get('date'))
-        print(start, event['summary'])
+    print(CalendarId)
+    for body in bodys:
+        event = service.events().insert(calendarId=CalendarId, body=body).execute()
+        print('Event created: %s' % (event.get('htmlLink')))
 
 
 if __name__ == '__main__':
