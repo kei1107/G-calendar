@@ -8,6 +8,8 @@ def Setup_Config():
     config_file = configparser.SafeConfigParser()
     config_file.read(config_file_path)
 
-    return config_file.get('settings', 'Mdid', ), \
-           config_file.get('settings', 'Pw'),\
-           config_file.get('settings','CalendarId')
+    return config_file.get('settings', 'mdid', ), \
+           config_file.get('settings', 'pw'), \
+           config_file.get('settings', 'calendarId'), \
+           config_file.get('settings', 'club_name'), \
+           config_file.get('settings', 'activity_location'),

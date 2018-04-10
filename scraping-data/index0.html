@@ -1,0 +1,4726 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+ <head>
+  <meta content="text/html; charset=utf-8" http-equiv="Content-Type"/>
+  <link href="css/mudy0040.css" rel="stylesheet" type="text/css"/>
+  <!-- JavaScript -->
+  <script src="./js/prototype.js" type="text/javascript">
+  </script>
+  <!--script src="./js/jquery-1.4.2.min.js" type="text/javascript"></script-->
+  <script type="text/javascript">
+   &lt;!--
+			//jQuery.noConflict()を呼び出しますが、これ以降、$は全てprototype.jsの動作(つまり、jquery.jsが読み込まれる前の動作)を踏襲する
+//			jQuery.noConflict();
+			var okmsg;
+			//インジケータインスタンス
+			var indi = new fncObjIndicator('./img/indicator.gif');
+			Event.observe(window,"load",function(){indi.indi_append("indicator");},false);
+
+			//データ取得
+			//
+			//引数　php_filename ：データを飛ばすPHPファイル
+			//　　　msg          ：OKだった時表示させるメッセージ。空ならメッセージが表示されない。alert文
+			function GetData(result_place,php_filename,msg) {
+				window.indi.indi_start();
+				okmsg=msg;//処理が成功した時のメッセージをセット
+				//ここから↓の$はprototypeの動作をします。
+				//jQueryオブジェクトとしての$は一切使えず、その場合は$()ではなくjQuery()と表記する必要がある
+				var parameter = "";
+				if(document.forms[0]!=undefined){
+					var lenEl = document.forms[0].length
+//parameter = parameter + document.forms[0].elements[0].id + "=" + $F(document.forms[0].elements[0].id).escapeHTML();
+					for(cntEl = 0; cntEl &lt;= lenEl -1 ; cntEl=cntEl+1){
+//alert("a:" + document.forms[0].elements[cntEl].id + ":" + document.forms[0].elements[cntEl].type);
+//alert("b:" + document.forms[0].elements[cntEl].name + ":" + document.forms[0].elements[cntEl].type);
+//alert("a:" + document.forms[0].elements[cntEl].id + ":b:" + document.forms[0].elements[cntEl].name + ":" + document.forms[0].elements[cntEl].type);
+						if (document.forms[0].elements[cntEl].id != ""){
+							switch (document.forms[0].elements[cntEl].type) {
+							case "radio"://radioボタンにはlabelを付けるのでidがつくからここでセットする
+								if(document.forms[0].elements[cntEl].checked){
+//									parameter = parameter + document.forms[0].elements[cntEl].name + "=" + document.forms[0].elements[cntEl].value + "&amp;";
+									parameter = parameter + document.forms[0].elements[cntEl].id + "=" + document.forms[0].elements[cntEl].value.escapeHTML() + "&amp;";
+								}
+								break;
+							case "select-one"://selectタグ、valueが設定されていればその値。なければ表示されているテキスト
+								var lenOp = document.forms[0].elements[cntEl].length
+								for(cntOp = 0; cntOp &lt;= lenOp -1 ; cntOp=cntOp+1){
+									if(document.forms[0].elements[cntEl].options[cntOp].selected){
+										parameter = parameter + document.forms[0].elements[cntEl].id + "[0]=" + document.forms[0].elements[cntEl].options[cntOp].value.escapeHTML() + "&amp;";
+										parameter = parameter + document.forms[0].elements[cntEl].id + "[1]=" + document.forms[0].elements[cntEl].options[cntOp].text.escapeHTML() + "&amp;";
+									}
+								}
+								break;
+							case "checkbox":
+								parameter = parameter + document.forms[0].elements[cntEl].id + "=" + document.forms[0].elements[cntEl].checked + "&amp;";
+								break;
+							case "text":
+							case "hidden":
+							case "textarea":
+//alert(document.forms[0].elements[cntEl].id + '::' + document.forms[0].elements[cntEl].value);
+								parameter = parameter + document.forms[0].elements[cntEl].id + "=" + document.forms[0].elements[cntEl].value + "&amp;";
+								break;
+							case "password":
+								parameter = parameter + document.forms[0].elements[cntEl].id + "=" + encodeURIComponent(document.forms[0].elements[cntEl].value) + "&amp;";
+								break;
+							default:
+								parameter = parameter + document.forms[0].elements[cntEl].id + "=" + document.forms[0].elements[cntEl].value.escapeHTML() + "&amp;";
+								break;
+							}
+						}else if(document.forms[0].elements[cntEl].name != ""){
+//alert("c:" + document.forms[0].elements[cntEl].name + ":" + document.forms[0].elements[cntEl].type);
+							switch (document.forms[0].elements[cntEl].type) {
+/*
+							case "radio":
+								if(document.forms[0].elements[cntEl].checked){
+									parameter = parameter + document.forms[0].elements[cntEl].name + "=" + document.forms[0].elements[cntEl].value + "&amp;";
+								}
+								break;
+*/
+							case "checkbox":
+								parameter = parameter + document.forms[0].elements[cntEl].name + "=" + document.forms[0].elements[cntEl].checked + "&amp;";
+								break;
+							case "text":
+							case "hidden":
+							case "textarea":
+								parameter = parameter + document.forms[0].elements[cntEl].name + "=" + document.forms[0].elements[cntEl].value.escapeHTML() + "&amp;";
+								break;
+							case "password":
+								parameter = parameter + document.forms[0].elements[cntEl].id + "=" + encodeURIComponent(document.forms[0].elements[cntEl].value) + "&amp;";
+								break;
+							default:
+								parameter = parameter + document.forms[0].elements[cntEl].name + "=" + document.forms[0].elements[cntEl].value.escapeHTML() + "&amp;";
+								break;
+							}
+						}else{
+							parameter = parameter + document.forms[0].elements[cntEl].name + "=" + document.forms[0].elements[cntEl].value.escapeHTML() + "&amp;";
+						}
+					}
+				}
+//alert(parameter);
+//var parameter = "msg1=" + $F('msg1').escapeHTML();
+				// Ajax.Requestオブジェクトを作成
+				var myAjax = new Ajax.Updater(
+					result_place,									// 差し込む要素
+					php_filename + "?cache="+(new Date()).getTime(),									// 呼び出し先のURL
+					{
+						method: 'post',							// メソッド
+						asynchronous: true,					// true:非同期 false:同期
+						postBody: parameter,				// ポストされるボディ部
+						onSuccess: AjaxSuccess,			// 呼び出しが成功した時に呼び出されるメソッド
+						onComplete: AjaxComplete,		// 呼び出しが完了時に呼び出されるメソッド
+						onFailure: AjaxFailed,			// 呼び出しが失敗した時に呼び出されるメソッド
+						onException: AjaxException	// 例外が発生した時に呼び出されるメソッド
+					}
+				);
+			}
+			function AjaxSuccess(xmlobj){
+				window.indi.indi_stop();
+				// 呼び出しが成功した時の処理
+				//alert('OK'+ xmlobj.statusText);
+				//alert(xmlobj.responseText);
+				if(okmsg!=''){
+					alert(okmsg);
+				}
+			}
+			function AjaxComplete(xmlobj){
+				if(typeof GetDataComplete == "function"){
+					GetDataComplete();
+				}
+			}
+			function AjaxFailed(xmlobj, json){
+				window.indi.indi_stop();
+				// 呼び出しが失敗した時の処理
+				alert('エラーです：' + xmlobj.statusText);
+			}
+			function AjaxException(xmlobj, e){
+				window.indi.indi_stop();
+				// 例外が発生した時の処理
+				alert('例外です：' + e.message);
+			}
+
+			function rightClick(){
+/*
+				//右クリック
+				jQuery(document).ready(function(){
+				  jQuery(document).bind("contextmenu",function(e){
+				    return false;
+				  });
+				})
+*/
+			}
+
+			function simple_tooltip(target_items, name){
+				jQuery(target_items).each(function(i){
+					jQuery("body").append("&lt;div class='"+name+"' id='"+name+i+"'&gt;&lt;p&gt;"+jQuery(this).attr('title')+"&lt;/p&gt;&lt;/div&gt;");
+					var my_tooltip =jQuery("#"+name+i);
+					if(jQuery(this).attr("title") != "" &amp;&amp; jQuery(this).attr("title") != "undefined" ){
+						jQuery(this).removeAttr("title").mouseover(function(){
+						my_tooltip.css({opacity:0.8, display:"none"}).fadeIn(400);
+						}).mousemove(function(kmouse){
+							var border_top = jQuery(window).scrollTop(); 
+							var border_right = jQuery(window).width();
+//alert(border_top+':'+border_right);
+							var left_pos;
+							var top_pos;
+							var offset = 20;
+//alert(my_tooltip.width());
+//alert(my_tooltip.width() +':'+ kmouse.pageX);//ie:1260 378 fx:250 446
+//							if(border_right - (offset * 2) &gt;= my_tooltip.width() + kmouse.pageX){
+							if(border_right - (offset * 2) &gt;= 250 + kmouse.pageX){
+								left_pos = kmouse.pageX+offset;
+							} else{
+//								left_pos = border_right-my_tooltip.width()-offset;
+								left_pos = border_right-250-offset;
+							}
+//alert(my_tooltip.height());
+//							if(border_top + (offset * 2)&gt;= kmouse.pageY - my_tooltip.height()){
+							if(border_top + (offset * 2)&gt;= kmouse.pageY - 70){
+								top_pos = border_top +offset;
+							} else{
+//								top_pos = kmouse.pageY-my_tooltip.height()-offset;
+								top_pos = kmouse.pageY-70-offset;
+							}
+							my_tooltip.css({left:left_pos, top:top_pos});
+						}).mouseout(function(){
+							my_tooltip.css({left:"-9999px"});
+						});
+					}
+				});
+			}
+
+			//インジケータ オブジェクト 
+			//obj.indi_apend(id)　DOMへ追加 appendする要素のID名
+			//obj.indi_start()　　インジケータスタート
+			//obj.indi_stop() 　　インジケータスタート
+			//obj.div 　　　　　　出力するdivオブジェクト
+			//obj.div.style 　　　CSS
+			//戻り値　　　　　　　インジケータオブジェクトのインスタンス
+			function fncObjIndicator(src){
+				this.div= setIndicatorDIV(src);
+				this.indi_append = indi_append;
+				this.indi_start  = indi_start;
+				this.indi_stop   = indi_stop;
+				this.img = new Image();
+				this.img.src = src;
+				function setIndicatorDIV(src){
+					// インジケータを出力するdiv
+					id = "_indicator"+(new Date()).getTime();//idを生成;
+					this.div = document.createElement("DIV") ;
+					// インジケータ用DIVのデフォルト値(インスタンスで上書き変更できます)
+					this.div.style.position = "relative";
+					this.div.style.top      = "0px";
+					this.div.style.left     = "0px";
+					this.div.style.width    = "0px";
+					this.div.style.height   = "0px";
+					this.div.style.margin  = '0px' ; 
+					this.div.style.padding = '0px' ; 
+					return this.div
+				}
+				function indi_append(id){
+					if(typeof document.getElementById(id) != 'object')return;
+					document.getElementById(id).appendChild(this.div);
+				}
+				//インジケータ スタート
+				function indi_start(){
+					//サイズを与えることで表示する
+					this.div.style.height="400px";
+					this.div.style.width="auto";
+					this.div.style.top="50%";
+					this.div.style.left="50%";
+					this.div.style.zindex="100";
+					this.div.style.position="absolute";
+					this.div.innerHTML  = '&lt;img src="'+this.img.src+'"&gt;';
+				}
+				//インジケータ ストップ
+				function indi_stop(){
+					this.div.style.width ="0px";
+					this.div.style.height ="0px";
+					this.div.style.top="0%";
+					this.div.style.left="0%";
+					this.div.style.zindex="0";
+					this.div.style.position="relative";
+					this.div.innerHTML  = '' ;
+				}
+				return this
+			}
+		//--&gt;
+  </script>
+  <script language="JavaScript" type="text/javascript">
+   &lt;!--
+			function formonload(varNo){
+				document.getElementById("txtStatus").value = varNo;
+				if(varNo==2){
+					var elements = document.getElementsByTagName("input");
+					for(i=0;i&lt;elements.length;i++){
+						if(elements[i].id.substring(0,3)=="chk"){
+							if(elements[i].checked==true){
+								if(confirm("この月の申込申請をキャンセルしますか？")==false){
+									switch(true){
+									case document.frmMain.selYm.selectedIndex==0:
+										document.frmMain.selYm.selectedIndex=1;
+										break;
+									case document.frmMain.selYm.selectedIndex==1:
+										document.frmMain.selYm.selectedIndex=0;
+										break;
+									}
+									return false;
+								}
+							}
+						}
+					}
+				}
+
+				rightClick();
+				GetData('divPlace','mudy0040s.php','');
+			}
+
+			function GetDataComplete(){
+				//飛び先が入っていれば
+				if(document.getElementById("txtNextPhp") != null){
+					var txtNextPhp = document.getElementById('txtNextPhp');
+					if (txtNextPhp){
+						if (txtNextPhp.value!=''){
+							document.frmMain.action = txtNextPhp.value;
+							document.frmMain.submit();
+						}
+					}
+				}
+
+				var head_obj = document.getElementById("head");
+				var head2_obj = document.getElementById("head2");
+				var detail_obj = document.getElementById("detail");
+				if(detail_obj){
+					detail_obj.onscroll=scroll_detail;
+				}
+				function scroll_detail(){
+					head_obj.scrollTop	= detail_obj.scrollTop;
+					head2_obj.scrollLeft = detail_obj.scrollLeft;
+					head2_obj.scrollTop	= detail_obj.scrollTop;
+				}
+			}
+		//--&gt;
+  </script>
+  <title>
+   運動施設予約システム
+  </title>
+ </head>
+ <body onload="formonload(0);">
+  <div id="header">
+   <h1>
+    運動施設予約システム　-　空き情報確認
+   </h1>
+  </div>
+  <!--headerEND-->
+  <div id="wrapper">
+   <div id="indicator">
+    <div style="position: relative; top: 0%; left: 0%; width: 0px; height: 0px; margin: 0px; padding: 0px;">
+    </div>
+   </div>
+   <div id="content">
+    <form action="" method="post" name="frmMain" target="">
+     <div id="divPlace">
+      <div class="month">
+       <select id="selYm" name="selYm" onchange="formonload(2);">
+        <option value="201804">
+         2018年 4月
+        </option>
+        <option value="201805">
+         2018年 5月
+        </option>
+       </select>
+      </div>
+      <!--monthEND-->
+      <div class="heading">
+       <p class="back">
+        <input id="button" name="button" onclick="document.frmMain.action='./mudy0020c.php';document.frmMain.submit();" type="button" value="戻る"/>
+       </p>
+       <table class="sut">
+        <tbody>
+         <tr>
+          <td class="sty1">
+           申請中
+          </td>
+          <td class="sty2">
+           審議中
+          </td>
+          <td class="sty3">
+           確定
+          </td>
+          <td class="styok">
+           予約可
+          </td>
+          <td class="styng">
+           予約不可
+          </td>
+         </tr>
+        </tbody>
+       </table>
+      </div>
+      <!--headingEND-->
+      <h2>
+       陸上競技場　（コマ制限期間中。テニスコートを除く１施設12コマ、全体で24コマ上限。テニスコートのみで20コマ上限）
+      </h2>
+      <p class="use">
+       A：フィールド北側　B：フィールド南側
+      </p>
+      <div class="main">
+       <div class="day" id="head">
+        <table>
+         <tbody>
+          <tr>
+           <td colspan="2" rowspan="2" style="font-size:10px;">
+            4/11(水)
+           </td>
+           <td class="cut">
+            A
+           </td>
+          </tr>
+          <tr>
+           <td class="cut">
+            B
+           </td>
+          </tr>
+          <tr>
+           <td colspan="2" rowspan="2" style="font-size:10px;">
+            4/12(木)
+           </td>
+           <td class="cut">
+            A
+           </td>
+          </tr>
+          <tr>
+           <td class="cut">
+            B
+           </td>
+          </tr>
+          <tr>
+           <td colspan="2" rowspan="2" style="font-size:10px;">
+            4/13(金)
+           </td>
+           <td class="cut">
+            A
+           </td>
+          </tr>
+          <tr>
+           <td class="cut">
+            B
+           </td>
+          </tr>
+          <tr>
+           <td class="sat01" colspan="2" rowspan="2" style="font-size:10px;">
+            4/14(土)
+           </td>
+           <td class="cut">
+            A
+           </td>
+          </tr>
+          <tr>
+           <td class="cut">
+            B
+           </td>
+          </tr>
+          <tr>
+           <td class="sun01" colspan="2" rowspan="2" style="font-size:10px;">
+            4/15(日)
+           </td>
+           <td class="cut">
+            A
+           </td>
+          </tr>
+          <tr>
+           <td class="cut">
+            B
+           </td>
+          </tr>
+          <tr>
+           <td colspan="2" rowspan="2" style="font-size:10px;">
+            4/16(月)
+           </td>
+           <td class="cut">
+            A
+           </td>
+          </tr>
+          <tr>
+           <td class="cut">
+            B
+           </td>
+          </tr>
+          <tr>
+           <td colspan="2" rowspan="2" style="font-size:10px;">
+            4/17(火)
+           </td>
+           <td class="cut">
+            A
+           </td>
+          </tr>
+          <tr>
+           <td class="cut">
+            B
+           </td>
+          </tr>
+          <tr>
+           <td colspan="2" rowspan="2" style="font-size:10px;">
+            4/18(水)
+           </td>
+           <td class="cut">
+            A
+           </td>
+          </tr>
+          <tr>
+           <td class="cut">
+            B
+           </td>
+          </tr>
+          <tr>
+           <td colspan="2" rowspan="2" style="font-size:10px;">
+            4/19(木)
+           </td>
+           <td class="cut">
+            A
+           </td>
+          </tr>
+          <tr>
+           <td class="cut">
+            B
+           </td>
+          </tr>
+          <tr>
+           <td colspan="2" rowspan="2" style="font-size:10px;">
+            4/20(金)
+           </td>
+           <td class="cut">
+            A
+           </td>
+          </tr>
+          <tr>
+           <td class="cut">
+            B
+           </td>
+          </tr>
+          <tr>
+           <td class="sat01" colspan="2" rowspan="2" style="font-size:10px;">
+            4/21(土)
+           </td>
+           <td class="cut">
+            A
+           </td>
+          </tr>
+          <tr>
+           <td class="cut">
+            B
+           </td>
+          </tr>
+          <tr>
+           <td class="sun01" colspan="2" rowspan="2" style="font-size:10px;">
+            4/22(日)
+           </td>
+           <td class="cut">
+            A
+           </td>
+          </tr>
+          <tr>
+           <td class="cut">
+            B
+           </td>
+          </tr>
+          <tr>
+           <td colspan="2" rowspan="2" style="font-size:10px;">
+            4/23(月)
+           </td>
+           <td class="cut">
+            A
+           </td>
+          </tr>
+          <tr>
+           <td class="cut">
+            B
+           </td>
+          </tr>
+          <tr>
+           <td colspan="2" rowspan="2" style="font-size:10px;">
+            4/24(火)
+           </td>
+           <td class="cut">
+            A
+           </td>
+          </tr>
+          <tr>
+           <td class="cut">
+            B
+           </td>
+          </tr>
+          <tr>
+           <td colspan="2" rowspan="2" style="font-size:10px;">
+            4/25(水)
+           </td>
+           <td class="cut">
+            A
+           </td>
+          </tr>
+          <tr>
+           <td class="cut">
+            B
+           </td>
+          </tr>
+          <tr>
+           <td colspan="2" rowspan="2" style="font-size:10px;">
+            4/26(木)
+           </td>
+           <td class="cut">
+            A
+           </td>
+          </tr>
+          <tr>
+           <td class="cut">
+            B
+           </td>
+          </tr>
+          <tr>
+           <td colspan="2" rowspan="2" style="font-size:10px;">
+            4/27(金)
+           </td>
+           <td class="cut">
+            A
+           </td>
+          </tr>
+          <tr>
+           <td class="cut">
+            B
+           </td>
+          </tr>
+          <tr>
+           <td class="sat01" colspan="2" rowspan="2" style="font-size:10px;">
+            4/28(土)
+           </td>
+           <td class="cut">
+            A
+           </td>
+          </tr>
+          <tr>
+           <td class="cut">
+            B
+           </td>
+          </tr>
+          <tr>
+           <td class="sun01" colspan="2" rowspan="2" style="font-size:10px;">
+            4/29(日)
+           </td>
+           <td class="cut">
+            A
+           </td>
+          </tr>
+          <tr>
+           <td class="cut">
+            B
+           </td>
+          </tr>
+          <tr>
+           <td class="sun01" colspan="2" rowspan="2" style="font-size:10px;">
+            4/30(月)
+           </td>
+           <td class="cut">
+            A
+           </td>
+          </tr>
+          <tr>
+           <td class="cut">
+            B
+           </td>
+          </tr>
+         </tbody>
+        </table>
+       </div>
+       <!--dayEND-->
+       <div class="time" id="head2">
+        <table style="width: 2240px;">
+         <tbody>
+          <tr>
+           <th>
+            7時
+           </th>
+           <th>
+            8時
+           </th>
+           <th>
+            9時
+           </th>
+           <th>
+            10時
+           </th>
+           <th>
+            11時
+           </th>
+           <th>
+            12時
+           </th>
+           <th>
+            13時
+           </th>
+           <th>
+            14時
+           </th>
+           <th>
+            15時
+           </th>
+           <th>
+            16時
+           </th>
+           <th>
+            17時
+           </th>
+           <th>
+            18時
+           </th>
+           <th>
+            19時
+           </th>
+           <th>
+            20時
+           </th>
+          </tr>
+         </tbody>
+        </table>
+       </div>
+       <!--facilEND-->
+       <div class="info" id="detail">
+        <table style="width: 2240px;">
+         <tbody>
+          <tr>
+           <td class="w2" colspan="2" id="styng">
+            使用不
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             男ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             男ラク
+            </span>
+           </td>
+           <td class="w1" colspan="1" id="sty3">
+            <span style="font-weight:bold;font-size:7px;line-height:8px;">
+             男ラク
+             <br/>
+            </span>
+           </td>
+           <td class="w13" colspan="13" id="styng">
+            授業
+           </td>
+           <td class="w4" colspan="4" id="styng">
+            一般開放
+           </td>
+           <td class="w8" colspan="8" id="styng">
+            授業
+           </td>
+           <td class="w2" colspan="2" id="styok">
+            締切
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             Blooms
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             Blooms
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             Blooms
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             Blooms
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             アメフト
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             アメフト
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             アメフト
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             アメフト
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             アメフト
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             アメフト
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="styng">
+            使用不
+           </td>
+          </tr>
+          <tr>
+           <td class="w2" colspan="2" id="styng">
+            使用不
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             男ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             男ラク
+            </span>
+           </td>
+           <td class="w1" colspan="1" id="sty3">
+            <span style="font-weight:bold;font-size:7px;line-height:8px;">
+             男ラク
+             <br/>
+            </span>
+           </td>
+           <td class="w13" colspan="13" id="styng">
+            授業
+           </td>
+           <td class="w4" colspan="4" id="styng">
+            一般開放
+           </td>
+           <td class="w8" colspan="8" id="styng">
+            授業
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             男ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             男ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             男ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             サッカー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             サッカー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             サッカー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             サッカー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             女ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             女ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             女ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             女ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="styng">
+            使用不
+           </td>
+          </tr>
+          <tr>
+           <td class="w2" colspan="2" id="styng">
+            使用不
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             男ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             男ラク
+            </span>
+           </td>
+           <td class="w1" colspan="1" id="sty3">
+            <span style="font-weight:bold;font-size:7px;line-height:8px;">
+             男ラク
+             <br/>
+            </span>
+           </td>
+           <td class="w13" colspan="13" id="styng">
+            授業
+           </td>
+           <td class="w4" colspan="4" id="styng">
+            一般開放
+           </td>
+           <td class="w14" colspan="14" id="styng">
+            授業
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             サッカー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             サッカー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             アメフト
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             アメフト
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             アメフト
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             アメフト
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             アメフト
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             アメフト
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="styng">
+            使用不
+           </td>
+          </tr>
+          <tr>
+           <td class="w2" colspan="2" id="styng">
+            使用不
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             男ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             男ラク
+            </span>
+           </td>
+           <td class="w1" colspan="1" id="sty3">
+            <span style="font-weight:bold;font-size:7px;line-height:8px;">
+             男ラク
+             <br/>
+            </span>
+           </td>
+           <td class="w13" colspan="13" id="styng">
+            授業
+           </td>
+           <td class="w4" colspan="4" id="styng">
+            一般開放
+           </td>
+           <td class="w14" colspan="14" id="styng">
+            授業
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             ラグビー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             ラグビー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             ラグビー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             ラグビー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             ラグビー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             ラグビー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             ラグビー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             ラグビー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="styng">
+            使用不
+           </td>
+          </tr>
+          <tr>
+           <td class="w2" colspan="2" id="styng">
+            使用不
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             女ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             女ラク
+            </span>
+           </td>
+           <td class="w1" colspan="1" id="sty3">
+            <span style="font-weight:bold;font-size:7px;line-height:8px;">
+             女ラク
+             <br/>
+            </span>
+           </td>
+           <td class="w13" colspan="13" id="styng">
+            授業
+           </td>
+           <td class="w4" colspan="4" id="styng">
+            一般開放
+           </td>
+           <td class="w10" colspan="10" id="styng">
+            授業
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             同好会
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             同好会
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             サッカー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             サッカー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             サッカー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             サッカー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             男ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             男ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             男ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             男ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="styng">
+            使用不
+           </td>
+          </tr>
+          <tr>
+           <td class="w2" colspan="2" id="styng">
+            使用不
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             女ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             女ラク
+            </span>
+           </td>
+           <td class="w1" colspan="1" id="sty3">
+            <span style="font-weight:bold;font-size:7px;line-height:8px;">
+             女ラク
+             <br/>
+            </span>
+           </td>
+           <td class="w13" colspan="13" id="styng">
+            授業
+           </td>
+           <td class="w4" colspan="4" id="styng">
+            一般開放
+           </td>
+           <td class="w10" colspan="10" id="styng">
+            授業
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             Blooms
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             Blooms
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             Blooms
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             Blooms
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             ラグビー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             ラグビー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             ラグビー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             ラグビー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             ラグビー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             ラグビー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="styng">
+            使用不
+           </td>
+          </tr>
+          <tr>
+           <td class="w2" colspan="2" id="styng">
+            使用不
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             女ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             女ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             女ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             女ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             女ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             女ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             女ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             女ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             女ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             ラグビー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             ラグビー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             ラグビー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             ラグビー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             ラグビー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             ラグビー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             ラグビー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             ラグビー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             ラグビー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             ラグビー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             ラグビー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             ラグビー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             医 サッカー
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             医 サッカー
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             医 サッカー
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             医 サッカー
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             医 サッカー
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="styng">
+            使用不
+           </td>
+          </tr>
+          <tr>
+           <td class="w2" colspan="2" id="styng">
+            使用不
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             女ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             女ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             女ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             女ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             女ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             女ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             女ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             女ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             女ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             ラグビー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             ラグビー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             ラグビー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             ラグビー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             ラグビー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             ラグビー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             ラグビー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             ラグビー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             ラグビー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             ラグビー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             ラグビー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             ラグビー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             医 サッカー
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             医 サッカー
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             医 サッカー
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             医 サッカー
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             医 サッカー
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="styng">
+            使用不
+           </td>
+          </tr>
+          <tr>
+           <td class="w2" colspan="2" id="styng">
+            使用不
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             サッカー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             サッカー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             サッカー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             サッカー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             サッカー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             サッカー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             サッカー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             サッカー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             サッカー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             アメフト
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             アメフト
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             アメフト
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             アメフト
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             アメフト
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             アメフト
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             アメフト
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             アメフト
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             アメフト
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             アメフト
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             アメフト
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             アメフト
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             アメフト
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             アメフト
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             アメフト
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             アメフト
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             アメフト
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="styng">
+            使用不
+           </td>
+          </tr>
+          <tr>
+           <td class="w2" colspan="2" id="styng">
+            使用不
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             サッカー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             サッカー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             サッカー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             サッカー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             サッカー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             サッカー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             サッカー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             サッカー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             サッカー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             アメフト
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             アメフト
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             アメフト
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             アメフト
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             アメフト
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             アメフト
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             アメフト
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             アメフト
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             アメフト
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             アメフト
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             アメフト
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             アメフト
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             アメフト
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             アメフト
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             アメフト
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             アメフト
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             アメフト
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="styng">
+            使用不
+           </td>
+          </tr>
+          <tr>
+           <td class="w2" colspan="2" id="styng">
+            使用不
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             男ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             男ラク
+            </span>
+           </td>
+           <td class="w1" colspan="1" id="sty3">
+            <span style="font-weight:bold;font-size:7px;line-height:8px;">
+             男ラク
+             <br/>
+            </span>
+           </td>
+           <td class="w13" colspan="13" id="styng">
+            授業
+           </td>
+           <td class="w4" colspan="4" id="styng">
+            一般開放
+           </td>
+           <td class="w14" colspan="14" id="styng">
+            授業
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             男ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             男ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             男ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             男ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             男ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             男ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             男ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             男ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="styng">
+            使用不
+           </td>
+          </tr>
+          <tr>
+           <td class="w2" colspan="2" id="styng">
+            使用不
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             男ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             男ラク
+            </span>
+           </td>
+           <td class="w1" colspan="1" id="sty3">
+            <span style="font-weight:bold;font-size:7px;line-height:8px;">
+             男ラク
+             <br/>
+            </span>
+           </td>
+           <td class="w13" colspan="13" id="styng">
+            授業
+           </td>
+           <td class="w4" colspan="4" id="styng">
+            一般開放
+           </td>
+           <td class="w14" colspan="14" id="styng">
+            授業
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             ラグビー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             ラグビー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             ラグビー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             女ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             女ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             女ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             女ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             女ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="styng">
+            使用不
+           </td>
+          </tr>
+          <tr>
+           <td class="w2" colspan="2" id="styng">
+            使用不
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             女ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             女ラク
+            </span>
+           </td>
+           <td class="w1" colspan="1" id="sty3">
+            <span style="font-weight:bold;font-size:7px;line-height:8px;">
+             女ラク
+             <br/>
+            </span>
+           </td>
+           <td class="w13" colspan="13" id="styng">
+            授業
+           </td>
+           <td class="w4" colspan="4" id="styng">
+            一般開放
+           </td>
+           <td class="w10" colspan="10" id="styng">
+            授業
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             ファルコン
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             ファルコン
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             サッカー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             サッカー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             アメフト
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             アメフト
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             アメフト
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             アメフト
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             アメフト
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             アメフト
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="styng">
+            使用不
+           </td>
+          </tr>
+          <tr>
+           <td class="w2" colspan="2" id="styng">
+            使用不
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             女ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             女ラク
+            </span>
+           </td>
+           <td class="w1" colspan="1" id="sty3">
+            <span style="font-weight:bold;font-size:7px;line-height:8px;">
+             女ラク
+             <br/>
+            </span>
+           </td>
+           <td class="w13" colspan="13" id="styng">
+            授業
+           </td>
+           <td class="w4" colspan="4" id="styng">
+            一般開放
+           </td>
+           <td class="w10" colspan="10" id="styng">
+            授業
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             ラグビー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             ラグビー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             ラグビー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             ラグビー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             ラグビー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             ラグビー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             ラグビー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             ラグビー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             ラグビー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             ラグビー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="styng">
+            使用不
+           </td>
+          </tr>
+          <tr>
+           <td class="w2" colspan="2" id="styng">
+            使用不
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             男ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             男ラク
+            </span>
+           </td>
+           <td class="w1" colspan="1" id="sty3">
+            <span style="font-weight:bold;font-size:7px;line-height:8px;">
+             男ラク
+             <br/>
+            </span>
+           </td>
+           <td class="w13" colspan="13" id="styng">
+            授業
+           </td>
+           <td class="w4" colspan="4" id="styng">
+            一般開放
+           </td>
+           <td class="w8" colspan="8" id="styng">
+            授業
+           </td>
+           <td class="w2" colspan="2" id="styok">
+            <label>
+             予約可
+            </label>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             Blooms
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             Blooms
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             Blooms
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             Blooms
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             アメフト
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             アメフト
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             アメフト
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             アメフト
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             アメフト
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             アメフト
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="styng">
+            使用不
+           </td>
+          </tr>
+          <tr>
+           <td class="w2" colspan="2" id="styng">
+            使用不
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             男ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             男ラク
+            </span>
+           </td>
+           <td class="w1" colspan="1" id="sty3">
+            <span style="font-weight:bold;font-size:7px;line-height:8px;">
+             男ラク
+             <br/>
+            </span>
+           </td>
+           <td class="w13" colspan="13" id="styng">
+            授業
+           </td>
+           <td class="w4" colspan="4" id="styng">
+            一般開放
+           </td>
+           <td class="w8" colspan="8" id="styng">
+            授業
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             男ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             男ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             男ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             サッカー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             サッカー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             サッカー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             サッカー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             女ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             女ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             女ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             女ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="styng">
+            使用不
+           </td>
+          </tr>
+          <tr>
+           <td class="w2" colspan="2" id="styng">
+            使用不
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             男ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             男ラク
+            </span>
+           </td>
+           <td class="w1" colspan="1" id="sty3">
+            <span style="font-weight:bold;font-size:7px;line-height:8px;">
+             男ラク
+             <br/>
+            </span>
+           </td>
+           <td class="w13" colspan="13" id="styng">
+            授業
+           </td>
+           <td class="w4" colspan="4" id="styng">
+            一般開放
+           </td>
+           <td class="w14" colspan="14" id="styng">
+            授業
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             サッカー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             サッカー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             アメフト
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             アメフト
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             アメフト
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             アメフト
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             アメフト
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             アメフト
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="styng">
+            使用不
+           </td>
+          </tr>
+          <tr>
+           <td class="w2" colspan="2" id="styng">
+            使用不
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             男ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             男ラク
+            </span>
+           </td>
+           <td class="w1" colspan="1" id="sty3">
+            <span style="font-weight:bold;font-size:7px;line-height:8px;">
+             男ラク
+             <br/>
+            </span>
+           </td>
+           <td class="w13" colspan="13" id="styng">
+            授業
+           </td>
+           <td class="w4" colspan="4" id="styng">
+            一般開放
+           </td>
+           <td class="w14" colspan="14" id="styng">
+            授業
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             ラグビー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             ラグビー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             ラグビー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             ラグビー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             ラグビー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             ラグビー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             ラグビー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             ラグビー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="styng">
+            使用不
+           </td>
+          </tr>
+          <tr>
+           <td class="w2" colspan="2" id="styng">
+            使用不
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             女ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             女ラク
+            </span>
+           </td>
+           <td class="w1" colspan="1" id="sty3">
+            <span style="font-weight:bold;font-size:7px;line-height:8px;">
+             女ラク
+             <br/>
+            </span>
+           </td>
+           <td class="w13" colspan="13" id="styng">
+            授業
+           </td>
+           <td class="w4" colspan="4" id="styng">
+            一般開放
+           </td>
+           <td class="w10" colspan="10" id="styng">
+            授業
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             ファルコン
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             ファルコン
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             サッカー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             サッカー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             サッカー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             サッカー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             男ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             男ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             男ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             男ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="styng">
+            使用不
+           </td>
+          </tr>
+          <tr>
+           <td class="w2" colspan="2" id="styng">
+            使用不
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             女ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             女ラク
+            </span>
+           </td>
+           <td class="w1" colspan="1" id="sty3">
+            <span style="font-weight:bold;font-size:7px;line-height:8px;">
+             女ラク
+             <br/>
+            </span>
+           </td>
+           <td class="w13" colspan="13" id="styng">
+            授業
+           </td>
+           <td class="w4" colspan="4" id="styng">
+            一般開放
+           </td>
+           <td class="w10" colspan="10" id="styng">
+            授業
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             Blooms
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             Blooms
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             Blooms
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             Blooms
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             ラグビー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             ラグビー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             ラグビー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             ラグビー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             ラグビー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             ラグビー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="styng">
+            使用不
+           </td>
+          </tr>
+          <tr>
+           <td class="w2" colspan="2" id="styng">
+            使用不
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             女ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             女ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             女ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             女ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             女ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             女ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             女ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             女ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             女ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             女ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             女ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             アメフト
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             アメフト
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             アメフト
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             アメフト
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             アメフト
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             アメフト
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             アメフト
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             アメフト
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             アメフト
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             アメフト
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             アメフト
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             アメフト
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             アメフト
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             アメフト
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             アメフト
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="styng">
+            使用不
+           </td>
+          </tr>
+          <tr>
+           <td class="w2" colspan="2" id="styng">
+            使用不
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             女ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             女ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             女ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             女ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             女ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             女ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             女ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             女ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             女ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             女ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             女ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             アメフト
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             アメフト
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             アメフト
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             アメフト
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             アメフト
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             アメフト
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             アメフト
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             アメフト
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             アメフト
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             アメフト
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             アメフト
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             アメフト
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             アメフト
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             アメフト
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             アメフト
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="styng">
+            使用不
+           </td>
+          </tr>
+          <tr>
+           <td class="w2" colspan="2" id="styng">
+            使用不
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             ラグビー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             ラグビー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             ラグビー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             ラグビー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             ラグビー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             ラグビー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             ラグビー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             ラグビー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             ラグビー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             ラグビー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             ラグビー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             男ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             男ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             男ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             男ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             男ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             男ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             男ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             男ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             男ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             男ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             男ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             男ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             男ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             男ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             男ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="styng">
+            使用不
+           </td>
+          </tr>
+          <tr>
+           <td class="w2" colspan="2" id="styng">
+            使用不
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             ラグビー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             ラグビー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             ラグビー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             ラグビー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             ラグビー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             ラグビー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             ラグビー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             ラグビー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             ラグビー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             ラグビー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             ラグビー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             男ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             男ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             男ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             男ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             男ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             男ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             男ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             男ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             男ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             男ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             男ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             男ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             男ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             男ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             男ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="styng">
+            使用不
+           </td>
+          </tr>
+          <tr>
+           <td class="w2" colspan="2" id="styng">
+            使用不
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             男ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             男ラク
+            </span>
+           </td>
+           <td class="w1" colspan="1" id="sty3">
+            <span style="font-weight:bold;font-size:7px;line-height:8px;">
+             男ラク
+             <br/>
+            </span>
+           </td>
+           <td class="w13" colspan="13" id="styng">
+            授業
+           </td>
+           <td class="w4" colspan="4" id="styng">
+            一般開放
+           </td>
+           <td class="w14" colspan="14" id="styng">
+            授業
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             男ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             男ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             男ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             男ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             男ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             男ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             男ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             男ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="styng">
+            使用不
+           </td>
+          </tr>
+          <tr>
+           <td class="w2" colspan="2" id="styng">
+            使用不
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             男ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             男ラク
+            </span>
+           </td>
+           <td class="w1" colspan="1" id="sty3">
+            <span style="font-weight:bold;font-size:7px;line-height:8px;">
+             男ラク
+             <br/>
+            </span>
+           </td>
+           <td class="w13" colspan="13" id="styng">
+            授業
+           </td>
+           <td class="w4" colspan="4" id="styng">
+            一般開放
+           </td>
+           <td class="w14" colspan="14" id="styng">
+            授業
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             ラグビー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             ラグビー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             ラグビー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             じょーけ
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             じょーけ
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             じょーけ
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             じょーけ
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="styok">
+            <label>
+             予約可
+            </label>
+           </td>
+           <td class="w2" colspan="2" id="styng">
+            使用不
+           </td>
+          </tr>
+          <tr>
+           <td class="w2" colspan="2" id="styng">
+            使用不
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             女ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             女ラク
+            </span>
+           </td>
+           <td class="w1" colspan="1" id="sty3">
+            <span style="font-weight:bold;font-size:7px;line-height:8px;">
+             女ラク
+             <br/>
+            </span>
+           </td>
+           <td class="w13" colspan="13" id="styng">
+            授業
+           </td>
+           <td class="w4" colspan="4" id="styng">
+            一般開放
+           </td>
+           <td class="w10" colspan="10" id="styng">
+            授業
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             ファルコン
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             ファルコン
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             サッカー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             サッカー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             アメフト
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             アメフト
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             アメフト
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             アメフト
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             アメフト
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             アメフト
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="styng">
+            使用不
+           </td>
+          </tr>
+          <tr>
+           <td class="w2" colspan="2" id="styng">
+            使用不
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             女ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             女ラク
+            </span>
+           </td>
+           <td class="w1" colspan="1" id="sty3">
+            <span style="font-weight:bold;font-size:7px;line-height:8px;">
+             女ラク
+             <br/>
+            </span>
+           </td>
+           <td class="w13" colspan="13" id="styng">
+            授業
+           </td>
+           <td class="w4" colspan="4" id="styng">
+            一般開放
+           </td>
+           <td class="w10" colspan="10" id="styng">
+            授業
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             ラグビー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             ラグビー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             ラグビー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             ラグビー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             ラグビー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             ラグビー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             ラグビー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             ラグビー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             ラグビー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             ラグビー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="styng">
+            使用不
+           </td>
+          </tr>
+          <tr>
+           <td class="w2" colspan="2" id="styng">
+            使用不
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             男ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             男ラク
+            </span>
+           </td>
+           <td class="w1" colspan="1" id="sty3">
+            <span style="font-weight:bold;font-size:7px;line-height:8px;">
+             男ラク
+             <br/>
+            </span>
+           </td>
+           <td class="w13" colspan="13" id="styng">
+            授業
+           </td>
+           <td class="w4" colspan="4" id="styng">
+            一般開放
+           </td>
+           <td class="w8" colspan="8" id="styng">
+            授業
+           </td>
+           <td class="w2" colspan="2" id="styok">
+            <label>
+             予約可
+            </label>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             Blooms
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             Blooms
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             Blooms
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             Blooms
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             アメフト
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             アメフト
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             アメフト
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             アメフト
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             アメフト
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             アメフト
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="styng">
+            使用不
+           </td>
+          </tr>
+          <tr>
+           <td class="w2" colspan="2" id="styng">
+            使用不
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             男ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             男ラク
+            </span>
+           </td>
+           <td class="w1" colspan="1" id="sty3">
+            <span style="font-weight:bold;font-size:7px;line-height:8px;">
+             男ラク
+             <br/>
+            </span>
+           </td>
+           <td class="w13" colspan="13" id="styng">
+            授業
+           </td>
+           <td class="w4" colspan="4" id="styng">
+            一般開放
+           </td>
+           <td class="w8" colspan="8" id="styng">
+            授業
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             男ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             男ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             男ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             サッカー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             サッカー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             サッカー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             サッカー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             funfan
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             funfan
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             funfan
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             funfan
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="styng">
+            使用不
+           </td>
+          </tr>
+          <tr>
+           <td class="w2" colspan="2" id="styng">
+            使用不
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             男ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             男ラク
+            </span>
+           </td>
+           <td class="w1" colspan="1" id="sty3">
+            <span style="font-weight:bold;font-size:7px;line-height:8px;">
+             男ラク
+             <br/>
+            </span>
+           </td>
+           <td class="w13" colspan="13" id="styng">
+            授業
+           </td>
+           <td class="w4" colspan="4" id="styng">
+            一般開放
+           </td>
+           <td class="w14" colspan="14" id="styng">
+            授業
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             サッカー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             サッカー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             アメフト
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             アメフト
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             アメフト
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             アメフト
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             アメフト
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             アメフト
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="styng">
+            使用不
+           </td>
+          </tr>
+          <tr>
+           <td class="w2" colspan="2" id="styng">
+            使用不
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             男ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             男ラク
+            </span>
+           </td>
+           <td class="w1" colspan="1" id="sty3">
+            <span style="font-weight:bold;font-size:7px;line-height:8px;">
+             男ラク
+             <br/>
+            </span>
+           </td>
+           <td class="w13" colspan="13" id="styng">
+            授業
+           </td>
+           <td class="w4" colspan="4" id="styng">
+            一般開放
+           </td>
+           <td class="w14" colspan="14" id="styng">
+            授業
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             ラグビー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             ラグビー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             ラグビー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             ラグビー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             ラグビー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             ラグビー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             ラグビー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             ラグビー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="styng">
+            使用不
+           </td>
+          </tr>
+          <tr>
+           <td class="w2" colspan="2" id="styng">
+            使用不
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             女ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             女ラク
+            </span>
+           </td>
+           <td class="w1" colspan="1" id="sty3">
+            <span style="font-weight:bold;font-size:7px;line-height:8px;">
+             女ラク
+             <br/>
+            </span>
+           </td>
+           <td class="w13" colspan="13" id="styng">
+            授業
+           </td>
+           <td class="w4" colspan="4" id="styng">
+            一般開放
+           </td>
+           <td class="w10" colspan="10" id="styng">
+            授業
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             ファルコン
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             ファルコン
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             サッカー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             サッカー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             サッカー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             サッカー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             男ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             男ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             男ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             男ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="styng">
+            使用不
+           </td>
+          </tr>
+          <tr>
+           <td class="w2" colspan="2" id="styng">
+            使用不
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             女ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             女ラク
+            </span>
+           </td>
+           <td class="w1" colspan="1" id="sty3">
+            <span style="font-weight:bold;font-size:7px;line-height:8px;">
+             女ラク
+             <br/>
+            </span>
+           </td>
+           <td class="w13" colspan="13" id="styng">
+            授業
+           </td>
+           <td class="w4" colspan="4" id="styng">
+            一般開放
+           </td>
+           <td class="w10" colspan="10" id="styng">
+            授業
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             Blooms
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             Blooms
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             Blooms
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             Blooms
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             ラグビー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             ラグビー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             ラグビー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             ラグビー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             ラグビー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             ラグビー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="styng">
+            使用不
+           </td>
+          </tr>
+          <tr>
+           <td class="w2" colspan="2" id="styng">
+            使用不
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             ラグビー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             ラグビー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             ラグビー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             ラグビー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             ラグビー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             ラグビー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             ラグビー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             ラグビー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             ラグビー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             ラグビー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="styok">
+            <label>
+             予約可
+            </label>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             ロス
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             ロス
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             ロス
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             ロス
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             ロス
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             ロス
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             同好会
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             同好会
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             同好会
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty1">
+            <span style="font-size:10px;font-weight:bold;">
+             男ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty1">
+            <span style="font-size:10px;font-weight:bold;">
+             男ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty1">
+            <span style="font-size:10px;font-weight:bold;">
+             男ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty1">
+            <span style="font-size:10px;font-weight:bold;">
+             男ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty1">
+            <span style="font-size:10px;font-weight:bold;">
+             男ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="styok">
+            <label>
+             予約可
+            </label>
+           </td>
+           <td class="w2" colspan="2" id="styng">
+            使用不
+           </td>
+          </tr>
+          <tr>
+           <td class="w2" colspan="2" id="styng">
+            使用不
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             医 サッカー
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             医 サッカー
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             医 サッカー
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             医 サッカー
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             医 サッカー
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             医 サッカー
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             医 サッカー
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             医 サッカー
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             医 サッカー
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             医 サッカー
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             医 サッカー
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             ロス
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             ロス
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             ロス
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             ロス
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             ロス
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             ロス
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty1">
+            <span style="font-size:10px;font-weight:bold;">
+             男ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty1">
+            <span style="font-size:10px;font-weight:bold;">
+             男ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty1">
+            <span style="font-size:10px;font-weight:bold;">
+             男ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty1">
+            <span style="font-size:10px;font-weight:bold;">
+             男ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty1">
+            <span style="font-size:10px;font-weight:bold;">
+             男ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty1">
+            <span style="font-size:10px;font-weight:bold;">
+             男ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty1">
+            <span style="font-size:10px;font-weight:bold;">
+             男ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty1">
+            <span style="font-size:10px;font-weight:bold;">
+             男ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="styok">
+            <label>
+             予約可
+            </label>
+           </td>
+           <td class="w2" colspan="2" id="styng">
+            使用不
+           </td>
+          </tr>
+          <tr>
+           <td class="w2" colspan="2" id="styng">
+            使用不
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             サッカー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             サッカー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             サッカー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             サッカー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             サッカー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             サッカー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             サッカー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             サッカー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             サッカー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             サッカー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             サッカー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             男ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             男ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             男ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             男ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             男ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             男ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty1">
+            <span style="font-size:10px;font-weight:bold;">
+             男ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty1">
+            <span style="font-size:10px;font-weight:bold;">
+             男ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty1">
+            <span style="font-size:10px;font-weight:bold;">
+             男ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty1">
+            <span style="font-size:10px;font-weight:bold;">
+             男ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty1">
+            <span style="font-size:10px;font-weight:bold;">
+             男ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty1">
+            <span style="font-size:10px;font-weight:bold;">
+             男ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty1">
+            <span style="font-size:10px;font-weight:bold;">
+             男ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty1">
+            <span style="font-size:10px;font-weight:bold;">
+             男ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty1">
+            <span style="font-size:10px;font-weight:bold;">
+             男ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="styng">
+            使用不
+           </td>
+          </tr>
+          <tr>
+           <td class="w2" colspan="2" id="styng">
+            使用不
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             サッカー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             サッカー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             サッカー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             サッカー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             サッカー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             サッカー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             サッカー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             サッカー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             サッカー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             サッカー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             サッカー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             男ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             男ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             男ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             男ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             男ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             男ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty1">
+            <span style="font-size:10px;font-weight:bold;">
+             男ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty1">
+            <span style="font-size:10px;font-weight:bold;">
+             男ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty1">
+            <span style="font-size:10px;font-weight:bold;">
+             男ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty1">
+            <span style="font-size:10px;font-weight:bold;">
+             男ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty1">
+            <span style="font-size:10px;font-weight:bold;">
+             男ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty1">
+            <span style="font-size:10px;font-weight:bold;">
+             男ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty1">
+            <span style="font-size:10px;font-weight:bold;">
+             男ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty1">
+            <span style="font-size:10px;font-weight:bold;">
+             男ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty1">
+            <span style="font-size:10px;font-weight:bold;">
+             男ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="styng">
+            使用不
+           </td>
+          </tr>
+          <tr>
+           <td class="w2" colspan="2" id="styng">
+            使用不
+           </td>
+           <td class="w2" colspan="2" id="sty1">
+            <span style="font-size:10px;font-weight:bold;">
+             名大祭
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty1">
+            <span style="font-size:10px;font-weight:bold;">
+             名大祭
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty1">
+            <span style="font-size:10px;font-weight:bold;">
+             名大祭
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty1">
+            <span style="font-size:10px;font-weight:bold;">
+             名大祭
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty1">
+            <span style="font-size:10px;font-weight:bold;">
+             名大祭
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty1">
+            <span style="font-size:10px;font-weight:bold;">
+             名大祭
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty1">
+            <span style="font-size:10px;font-weight:bold;">
+             名大祭
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty1">
+            <span style="font-size:10px;font-weight:bold;">
+             名大祭
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty1">
+            <span style="font-size:10px;font-weight:bold;">
+             名大祭
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty1">
+            <span style="font-size:10px;font-weight:bold;">
+             名大祭
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty1">
+            <span style="font-size:10px;font-weight:bold;">
+             名大祭
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             じょーけ
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             じょーけ
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             じょーけ
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             じょーけ
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             じょーけ
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             女ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             女ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             女ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             女ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             女ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             女ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             女ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             女ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             女ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             女ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="styng">
+            使用不
+           </td>
+          </tr>
+          <tr>
+           <td class="w2" colspan="2" id="styng">
+            使用不
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             ラグビー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             ラグビー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             ラグビー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             ラグビー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             ラグビー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             ラグビー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             ラグビー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             ラグビー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             ラグビー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             ラグビー部
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             女ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             じょーけ
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             じょーけ
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             じょーけ
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             じょーけ
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             じょーけ
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             女ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             女ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             女ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             女ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             女ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             女ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             女ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             女ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             女ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="sty3">
+            <span style="font-size:10px;font-weight:bold;">
+             女ラク
+            </span>
+           </td>
+           <td class="w2" colspan="2" id="styng">
+            使用不
+           </td>
+          </tr>
+         </tbody>
+        </table>
+       </div>
+       <!--infoEND-->
+      </div>
+      <!--mainEND-->
+     </div>
+     <div id="hidden">
+      <input id="txtStatus" name="txtStatus" type="hidden" value="0"/>
+      <input id="txtFileMoto" name="txtFileMoto" type="hidden" value="mudy0040c.php"/>
+      <input id="txtModori" name="txtModori" type="hidden" value="mudy0020c.php"/>
+      <input id="txtDntCd" name="txtDntCd" type="hidden" value=""/>
+      <input id="txtSstCd" name="txtSstCd" type="hidden" value="1"/>
+     </div>
+    </form>
+   </div>
+   <!--contentEND-->
+  </div>
+  <!--wrapperEND-->
+ </body>
+</html>
