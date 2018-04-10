@@ -1,4 +1,0 @@
-config folder
-
-Mdid := Nagoya univ id
-Pw := Nagoya univ password

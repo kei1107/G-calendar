@@ -3,6 +3,16 @@ client_secret.json
 settings.ini
 
 
+json/*
+log/*
+scraping-data/*
+
+# gitkeep
+!.gitkeep
+
+# OSX
+.DS_Store
+
 # ==============================
 
 # Byte-compiled / optimized / DLL files
@@ -110,6 +120,3 @@ venv.bak/
 # mypy
 .mypy_cache/
 .mypy_cache/
-
-
-.DS_Store
