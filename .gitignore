@@ -5,7 +5,8 @@ settings.ini
 
 json/*
 log/*
-scraping-data/*
+scraping-data/*.html
+
 
 # gitkeep
 !.gitkeep
