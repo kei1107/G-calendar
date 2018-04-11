@@ -1,13 +1,14 @@
 import os
 import configparser
 import sys
+import codecs
 
 
 def Setup_Config(logger):
     config_dif_path = os.path.join(os.path.abspath('.'), 'config')
     config_file_path = os.path.join(config_dif_path, 'settings.ini')
     config_file = configparser.SafeConfigParser()
-    config_file.read(config_file_path)
+    config_file.readfp(codecs.open(config_file_path, 'r', 'utf8'))
 
     mdid = config_file.get('settings', 'mdid')
     pw = config_file.get('settings', 'pw')
@@ -26,7 +27,7 @@ def Setup_Config_non_idpw(logger):
     config_dif_path = os.path.join(os.path.abspath('.'), 'config')
     config_file_path = os.path.join(config_dif_path, 'settings.ini')
     config_file = configparser.SafeConfigParser()
-    config_file.read(config_file_path)
+    config_file.readfp(codecs.open(config_file_path, 'r', 'utf8'))
 
     calendarid = config_file.get('settings', 'calendarid')
     club_name = config_file.get('settings', 'club_name')

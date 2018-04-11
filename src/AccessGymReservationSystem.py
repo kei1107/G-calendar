@@ -15,12 +15,12 @@ def access(mdid, pw, activity_location, logger):
     options = Options()
     options.binary_location = None
     if os.name == 'posix':
-        options.binary_location = '/Applications/Google Chrome Canary.app/Contents/MacOS/Google Chrome Canary'
+        options.binary_location = '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'
     elif os.name == 'nt':
         options.binary_location = 'C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe'
 
     if options.binary_location is None:
-        print('What\'s your OS ??? ')
+        logger.info('Support : Windows , OSX')
         sys.exit()
     try:
         options.add_argument('--headless')

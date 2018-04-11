@@ -30,11 +30,15 @@ def location0(trs, base_time, club_name):
                         bodys.append({
                             'summary': club_name + '活動日' + location[j],
                             'start': {
-                                'dateTime': start_time.astimezone(pytz.timezone('Asia/Tokyo')).isoformat(),
+                                'dateTime': datetime.datetime.combine(start_time, datetime.time(start_time.hour - 9,
+                                                                                                start_time.minute).replace(
+                                    tzinfo=pytz.utc)).astimezone(pytz.timezone('Asia/Tokyo')).isoformat(),
                                 'timeZone': 'Asia/Tokyo',
                             },
                             'end': {
-                                'dateTime': end_time.astimezone(pytz.timezone('Asia/Tokyo')).isoformat(),
+                                'dateTime': datetime.datetime.combine(end_time, datetime.time(end_time.hour - 9,
+                                                                                              end_time.minute).replace(
+                                    tzinfo=pytz.utc)).astimezone(pytz.timezone('Asia/Tokyo')).isoformat(),
                                 'timeZone': 'Asia/Tokyo',
                             }
                         })
@@ -45,11 +49,16 @@ def location0(trs, base_time, club_name):
                 bodys.append({
                     'summary': club_name + '活動日' + location[j],
                     'start': {
-                        'dateTime': start_time.astimezone(pytz.timezone('Asia/Tokyo')).isoformat(),
+                        'dateTime': datetime.datetime.combine(start_time, datetime.time(start_time.hour - 9,
+                                                                                        start_time.minute).replace(
+                            tzinfo=pytz.utc)).astimezone(pytz.timezone('Asia/Tokyo')).isoformat(),
                         'timeZone': 'Asia/Tokyo',
                     },
                     'end': {
-                        'dateTime': end_time.astimezone(pytz.timezone('Asia/Tokyo')).isoformat(),
+                        'dateTime': datetime.datetime.combine(end_time,
+                                                              datetime.time(end_time.hour - 9, end_time.minute).replace(
+                                                                  tzinfo=pytz.utc)).astimezone(
+                            pytz.timezone('Asia/Tokyo')).isoformat(),
                         'timeZone': 'Asia/Tokyo',
                     }
                 })
@@ -83,11 +92,15 @@ def location1(trs, base_time, club_name):
                         bodys.append({
                             'summary': club_name + '活動日' + location[j],
                             'start': {
-                                'dateTime': start_time.astimezone(pytz.timezone('Asia/Tokyo')).isoformat(),
+                                'dateTime': datetime.datetime.combine(start_time, datetime.time(start_time.hour - 9,
+                                                                                                start_time.minute).replace(
+                                    tzinfo=pytz.utc)).astimezone(pytz.timezone('Asia/Tokyo')).isoformat(),
                                 'timeZone': 'Asia/Tokyo',
                             },
                             'end': {
-                                'dateTime': end_time.astimezone(pytz.timezone('Asia/Tokyo')).isoformat(),
+                                'dateTime': datetime.datetime.combine(end_time, datetime.time(end_time.hour - 9,
+                                                                                              end_time.minute).replace(
+                                    tzinfo=pytz.utc)).astimezone(pytz.timezone('Asia/Tokyo')).isoformat(),
                                 'timeZone': 'Asia/Tokyo',
                             }
                         })
@@ -98,11 +111,16 @@ def location1(trs, base_time, club_name):
                 bodys.append({
                     'summary': club_name + '活動日' + location[j],
                     'start': {
-                        'dateTime': start_time.astimezone(pytz.timezone('Asia/Tokyo')).isoformat(),
+                        'dateTime': datetime.datetime.combine(start_time, datetime.time(start_time.hour - 9,
+                                                                                        start_time.minute).replace(
+                            tzinfo=pytz.utc)).astimezone(pytz.timezone('Asia/Tokyo')).isoformat(),
                         'timeZone': 'Asia/Tokyo',
                     },
                     'end': {
-                        'dateTime': end_time.astimezone(pytz.timezone('Asia/Tokyo')).isoformat(),
+                        'dateTime': datetime.datetime.combine(end_time,
+                                                              datetime.time(end_time.hour - 9, end_time.minute).replace(
+                                                                  tzinfo=pytz.utc)).astimezone(
+                            pytz.timezone('Asia/Tokyo')).isoformat(),
                         'timeZone': 'Asia/Tokyo',
                     }
                 })
@@ -136,11 +154,15 @@ def location2(trs, base_time, club_name):
                         bodys.append({
                             'summary': club_name + '活動日' + location[j],
                             'start': {
-                                'dateTime': start_time.astimezone(pytz.timezone('Asia/Tokyo')).isoformat(),
+                                'dateTime': datetime.datetime.combine(start_time, datetime.time(start_time.hour - 9,
+                                                                                                start_time.minute).replace(
+                                    tzinfo=pytz.utc)).astimezone(pytz.timezone('Asia/Tokyo')).isoformat(),
                                 'timeZone': 'Asia/Tokyo',
                             },
                             'end': {
-                                'dateTime': end_time.astimezone(pytz.timezone('Asia/Tokyo')).isoformat(),
+                                'dateTime': datetime.datetime.combine(end_time, datetime.time(end_time.hour - 9,
+                                                                                              end_time.minute).replace(
+                                    tzinfo=pytz.utc)).astimezone(pytz.timezone('Asia/Tokyo')).isoformat(),
                                 'timeZone': 'Asia/Tokyo',
                             }
                         })
@@ -151,11 +173,16 @@ def location2(trs, base_time, club_name):
                 bodys.append({
                     'summary': club_name + '活動日' + location[j],
                     'start': {
-                        'dateTime': start_time.astimezone(pytz.timezone('Asia/Tokyo')).isoformat(),
+                        'dateTime': datetime.datetime.combine(start_time, datetime.time(start_time.hour - 9,
+                                                                                        start_time.minute).replace(
+                            tzinfo=pytz.utc)).astimezone(pytz.timezone('Asia/Tokyo')).isoformat(),
                         'timeZone': 'Asia/Tokyo',
                     },
                     'end': {
-                        'dateTime': end_time.astimezone(pytz.timezone('Asia/Tokyo')).isoformat(),
+                        'dateTime': datetime.datetime.combine(end_time,
+                                                              datetime.time(end_time.hour - 9, end_time.minute).replace(
+                                                                  tzinfo=pytz.utc)).astimezone(
+                            pytz.timezone('Asia/Tokyo')).isoformat(),
                         'timeZone': 'Asia/Tokyo',
                     }
                 })
@@ -190,11 +217,15 @@ def location3(trs, base_time, club_name):
                         bodys.append({
                             'summary': club_name + '活動日' + location[j],
                             'start': {
-                                'dateTime': start_time.astimezone(pytz.timezone('Asia/Tokyo')).isoformat(),
+                                'dateTime': datetime.datetime.combine(start_time, datetime.time(start_time.hour - 9,
+                                                                                                start_time.minute).replace(
+                                    tzinfo=pytz.utc)).astimezone(pytz.timezone('Asia/Tokyo')).isoformat(),
                                 'timeZone': 'Asia/Tokyo',
                             },
                             'end': {
-                                'dateTime': end_time.astimezone(pytz.timezone('Asia/Tokyo')).isoformat(),
+                                'dateTime': datetime.datetime.combine(end_time, datetime.time(end_time.hour - 9,
+                                                                                              end_time.minute).replace(
+                                    tzinfo=pytz.utc)).astimezone(pytz.timezone('Asia/Tokyo')).isoformat(),
                                 'timeZone': 'Asia/Tokyo',
                             }
                         })
@@ -205,11 +236,16 @@ def location3(trs, base_time, club_name):
                 bodys.append({
                     'summary': club_name + '活動日' + location[j],
                     'start': {
-                        'dateTime': start_time.astimezone(pytz.timezone('Asia/Tokyo')).isoformat(),
+                        'dateTime': datetime.datetime.combine(start_time, datetime.time(start_time.hour - 9,
+                                                                                        start_time.minute).replace(
+                            tzinfo=pytz.utc)).astimezone(pytz.timezone('Asia/Tokyo')).isoformat(),
                         'timeZone': 'Asia/Tokyo',
                     },
                     'end': {
-                        'dateTime': end_time.astimezone(pytz.timezone('Asia/Tokyo')).isoformat(),
+                        'dateTime': datetime.datetime.combine(end_time,
+                                                              datetime.time(end_time.hour - 9, end_time.minute).replace(
+                                                                  tzinfo=pytz.utc)).astimezone(
+                            pytz.timezone('Asia/Tokyo')).isoformat(),
                         'timeZone': 'Asia/Tokyo',
                     }
                 })
@@ -244,11 +280,15 @@ def location4(trs, base_time, club_name):
                         bodys.append({
                             'summary': club_name + '活動日' + location[j],
                             'start': {
-                                'dateTime': start_time.astimezone(pytz.timezone('Asia/Tokyo')).isoformat(),
+                                'dateTime': datetime.datetime.combine(start_time, datetime.time(start_time.hour - 9,
+                                                                                                start_time.minute).replace(
+                                    tzinfo=pytz.utc)).astimezone(pytz.timezone('Asia/Tokyo')).isoformat(),
                                 'timeZone': 'Asia/Tokyo',
                             },
                             'end': {
-                                'dateTime': end_time.astimezone(pytz.timezone('Asia/Tokyo')).isoformat(),
+                                'dateTime': datetime.datetime.combine(end_time, datetime.time(end_time.hour - 9,
+                                                                                              end_time.minute).replace(
+                                    tzinfo=pytz.utc)).astimezone(pytz.timezone('Asia/Tokyo')).isoformat(),
                                 'timeZone': 'Asia/Tokyo',
                             }
                         })
@@ -259,11 +299,16 @@ def location4(trs, base_time, club_name):
                 bodys.append({
                     'summary': club_name + '活動日' + location[j],
                     'start': {
-                        'dateTime': start_time.astimezone(pytz.timezone('Asia/Tokyo')).isoformat(),
+                        'dateTime': datetime.datetime.combine(start_time, datetime.time(start_time.hour - 9,
+                                                                                        start_time.minute).replace(
+                            tzinfo=pytz.utc)).astimezone(pytz.timezone('Asia/Tokyo')).isoformat(),
                         'timeZone': 'Asia/Tokyo',
                     },
                     'end': {
-                        'dateTime': end_time.astimezone(pytz.timezone('Asia/Tokyo')).isoformat(),
+                        'dateTime': datetime.datetime.combine(end_time,
+                                                              datetime.time(end_time.hour - 9, end_time.minute).replace(
+                                                                  tzinfo=pytz.utc)).astimezone(
+                            pytz.timezone('Asia/Tokyo')).isoformat(),
                         'timeZone': 'Asia/Tokyo',
                     }
                 })
@@ -297,11 +342,15 @@ def location5(trs, base_time, club_name):
                         bodys.append({
                             'summary': club_name + '活動日' + location[j],
                             'start': {
-                                'dateTime': start_time.astimezone(pytz.timezone('Asia/Tokyo')).isoformat(),
+                                'dateTime': datetime.datetime.combine(start_time, datetime.time(start_time.hour - 9,
+                                                                                                start_time.minute).replace(
+                                    tzinfo=pytz.utc)).astimezone(pytz.timezone('Asia/Tokyo')).isoformat(),
                                 'timeZone': 'Asia/Tokyo',
                             },
                             'end': {
-                                'dateTime': end_time.astimezone(pytz.timezone('Asia/Tokyo')).isoformat(),
+                                'dateTime': datetime.datetime.combine(end_time, datetime.time(end_time.hour - 9,
+                                                                                              end_time.minute).replace(
+                                    tzinfo=pytz.utc)).astimezone(pytz.timezone('Asia/Tokyo')).isoformat(),
                                 'timeZone': 'Asia/Tokyo',
                             }
                         })
@@ -312,11 +361,16 @@ def location5(trs, base_time, club_name):
                 bodys.append({
                     'summary': club_name + '活動日' + location[j],
                     'start': {
-                        'dateTime': start_time.astimezone(pytz.timezone('Asia/Tokyo')).isoformat(),
+                        'dateTime': datetime.datetime.combine(start_time, datetime.time(start_time.hour - 9,
+                                                                                        start_time.minute).replace(
+                            tzinfo=pytz.utc)).astimezone(pytz.timezone('Asia/Tokyo')).isoformat(),
                         'timeZone': 'Asia/Tokyo',
                     },
                     'end': {
-                        'dateTime': end_time.astimezone(pytz.timezone('Asia/Tokyo')).isoformat(),
+                        'dateTime': datetime.datetime.combine(end_time,
+                                                              datetime.time(end_time.hour - 9, end_time.minute).replace(
+                                                                  tzinfo=pytz.utc)).astimezone(
+                            pytz.timezone('Asia/Tokyo')).isoformat(),
                         'timeZone': 'Asia/Tokyo',
                     }
                 })
@@ -350,11 +404,15 @@ def location6(trs, base_time, club_name):
                         bodys.append({
                             'summary': club_name + '活動日' + location[j],
                             'start': {
-                                'dateTime': start_time.astimezone(pytz.timezone('Asia/Tokyo')).isoformat(),
+                                'dateTime': datetime.datetime.combine(start_time, datetime.time(start_time.hour - 9,
+                                                                                                start_time.minute).replace(
+                                    tzinfo=pytz.utc)).astimezone(pytz.timezone('Asia/Tokyo')).isoformat(),
                                 'timeZone': 'Asia/Tokyo',
                             },
                             'end': {
-                                'dateTime': end_time.astimezone(pytz.timezone('Asia/Tokyo')).isoformat(),
+                                'dateTime': datetime.datetime.combine(end_time, datetime.time(end_time.hour - 9,
+                                                                                              end_time.minute).replace(
+                                    tzinfo=pytz.utc)).astimezone(pytz.timezone('Asia/Tokyo')).isoformat(),
                                 'timeZone': 'Asia/Tokyo',
                             }
                         })
@@ -365,11 +423,16 @@ def location6(trs, base_time, club_name):
                 bodys.append({
                     'summary': club_name + '活動日' + location[j],
                     'start': {
-                        'dateTime': start_time.astimezone(pytz.timezone('Asia/Tokyo')).isoformat(),
+                        'dateTime': datetime.datetime.combine(start_time, datetime.time(start_time.hour - 9,
+                                                                                        start_time.minute).replace(
+                            tzinfo=pytz.utc)).astimezone(pytz.timezone('Asia/Tokyo')).isoformat(),
                         'timeZone': 'Asia/Tokyo',
                     },
                     'end': {
-                        'dateTime': end_time.astimezone(pytz.timezone('Asia/Tokyo')).isoformat(),
+                        'dateTime': datetime.datetime.combine(end_time,
+                                                              datetime.time(end_time.hour - 9, end_time.minute).replace(
+                                                                  tzinfo=pytz.utc)).astimezone(
+                            pytz.timezone('Asia/Tokyo')).isoformat(),
                         'timeZone': 'Asia/Tokyo',
                     }
                 })

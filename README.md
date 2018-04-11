@@ -4,6 +4,8 @@
 
 Get activity dates from [Nagoya Univ. sports facility reservation system](http://133.6.82.138/undou/mudy0010c.php) and add it to Google Calendar.
 
+Support : Windows , OSX
+
 ## 1. Prerequisites
 
 Google  Account and api
@@ -22,9 +24,9 @@ Python2
   - selenium
   - google-api-python-client
 
-Google Chrome Canary
+Google Chrome
 ---
-[Google Chrome Canary](https://www.google.co.jp/chrome/browser/canary.html)  
+[Google Chrome](https://www.google.co.jp/chrome/index.html)  
 [ChromeDriver](https://sites.google.com/a/chromium.org/chromedriver/downloads)
 
 ## 2. Setting Prerequisites
@@ -54,12 +56,12 @@ $ pip install --upgrade selenium
 $ pip install --upgrade google-api-python-client
 ```
 
-Google Chrome Canary
+Google Chrome
 ---
-Google Chrome Canary及びChromeDriverのインストール  
+Google Chrome及びChromeDriverのインストール  
 
-Install Google Chrome Canary and ChromeDriver  
-[Google Chrome Canary](https://www.google.co.jp/chrome/browser/canary.html)  
+Install Google Chrome and ChromeDriver  
+[Google Chrome](https://www.google.co.jp/chrome/index.html)  
 [ChromeDriver](https://sites.google.com/a/chromium.org/chromedriver/downloads)  
 
 **環境変数PATHの設定を必ず行って下さい**

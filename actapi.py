@@ -46,8 +46,9 @@ def main():
                                      table_path=table_path)
     print('======= Activity information =======', flush=True)
     for body in bodys:
-        print('summary : ' + body['summary'] + ', start : ' + body['start']['dateTime'] + ', end : ' + body['end'][
-            'dateTime'],
+        output_str = 'summary : ' + body['summary'] + ', start : ' + body['start']['dateTime'] + ', end : ' + \
+                     body['end']['dateTime']
+        print(output_str.replace('\xe9', ''),
               flush=True)
     print('====================================', flush=True)
     com = input('この情報をあなたのカレンダーに追加しますか？(Do you add this information to your calendar?) : (y/n) ')
