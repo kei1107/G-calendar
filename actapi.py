@@ -3,7 +3,6 @@ from __future__ import print_function
 import httplib2
 from apiclient import discovery
 from oauth2client import tools
-from pprint import pprint
 import src
 import sys
 import time
