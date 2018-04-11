@@ -1,7 +1,5 @@
 # !!important!!
 client_secret.json
-settings.ini
-
 
 json/*
 log/*
