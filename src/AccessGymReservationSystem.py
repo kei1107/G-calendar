@@ -1,5 +1,4 @@
 from bs4 import BeautifulSoup
-from pprint import pprint
 
 from selenium import webdriver
 from selenium.webdriver.common.alert import Alert
@@ -29,7 +28,7 @@ def access(mdid, pw, activity_location, logger):
 
         # http://133.6.82.138/undou/mudy0010c.php
         driver.get(main_url)
-        logger.info('Accessing')
+        logger.info('Accessing <http://133.6.82.138/undou/mudy0010c.php>')
         time.sleep(2)  # rendering
         logger.info('Try login')
         login_id = driver.find_element_by_id('txtMdId')
@@ -42,8 +41,8 @@ def access(mdid, pw, activity_location, logger):
         # http://133.6.82.138/undou/mudy0020c.php
         time.sleep(10)  # rendering
         login_button2s = driver.find_elements_by_id('button2')
-        if len(login_button2s) == 0:
-            logger.info('Access failure. Please retry.')
+        if (login_button2s is None) or (len(login_button2s) == 0):
+            logger.info('Access failure. Please retry or check mdid , pw in settings.ini .')
             sys.exit()
         logger.info('Access success')
         logger.info('loading gym reservation')

@@ -1,5 +1,4 @@
 from bs4 import BeautifulSoup
-from pprint import pprint
 import datetime
 import pytz
 import sys
@@ -378,11 +377,13 @@ def location6(trs, base_time, club_name):
     return bodys
 
 
-def create_api(club_name, activity_location, logger):
+def create_api(club_name, activity_location, logger, table_path=None):
     base_time = datetime.datetime.now()
     base_time = base_time - datetime.timedelta(hours=base_time.hour, minutes=base_time.minute, seconds=base_time.second,
                                                microseconds=base_time.microsecond) + datetime.timedelta(hours=7)
-    soup = BeautifulSoup(open('scraping-data/index' + activity_location + '.html', encoding='UTF-8'), 'html.parser')
+    soup = BeautifulSoup(
+        open((lambda x: 'scraping-data/index' + activity_location + '.html' if x is None else x)(table_path),
+             encoding='UTF-8'), 'html.parser')
     detail = soup.find(id='detail')
     if detail is None:
         logger.info('Cann\'t open index' + activity_location + '.html')

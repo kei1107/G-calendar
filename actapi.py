@@ -6,6 +6,7 @@ from oauth2client import tools
 from pprint import pprint
 import src
 import sys
+import time
 
 try:
     import argparse
@@ -14,23 +15,56 @@ try:
 except ImportError:
     flags = None
 
-# get Nu info
-mdid, pw, calendarId, club_name, activity_location = src.Setup_Config.Setup_Config()
 # setting logger
 logger = src.Setup_Logger.Setup_Logger()
 
 
 def main():
+    mdid = None
+    pw = None
+    calendarid = None
+    club_name = None
+    activity_location = None
+    table_path = None
+
     logger.info('Create Calendar events')
-    src.AccessGymReservationSystem.access(mdid=mdid, pw=pw, activity_location=activity_location, logger=logger)
-    bodys = src.CreateApi.create_api(club_name=club_name, activity_location=activity_location, logger=logger)
-    pprint(bodys)
+    time.sleep(0.1)
+    com = input('本日のテーブルデータを用いますか?(Do you use today\'s table data?) : (y/n) ')
+    if com == 'n':
+        # get Nu info
+        mdid, pw, calendarid, club_name, activity_location = src.Setup_Config.Setup_Config(logger=logger)
+        src.AccessGymReservationSystem.access(mdid=mdid, pw=pw, activity_location=activity_location, logger=logger)
+    elif com == 'y':
+        table_path = input('テーブルデータのパスを入力して下さい.(Please input table data path.) : ')
+        calendarid, club_name, activity_location = src.Setup_Config.Setup_Config_non_idpw(logger=logger)
+    else:
+        logger.info('Your input command \"' + com + '\" is not defined.')
+        logger.info('Program quit.')
+        sys.exit()
+
+    time.sleep(0.1)
+    bodys = src.CreateApi.create_api(club_name=club_name, activity_location=activity_location, logger=logger,
+                                     table_path=table_path)
+    print('======= Activity information =======', flush=True)
+    for body in bodys:
+        print('summary : ' + body['summary'] + ', start : ' + body['start']['dateTime'] + ', end : ' + body['end'][
+            'dateTime'],
+              flush=True)
+    print('====================================', flush=True)
+    com = input('この情報をあなたのカレンダーに追加しますか？(Do you add this information to your calendar?) : (y/n) ')
+
+    if com != 'y':
+        if com != 'n':
+            logger.info('Your input command \"' + com + '\" is not defined.')
+        logger.info('Program quit.')
+        sys.exit()
+
     credentials = src.Get_Credentials.get_credentials(flags=flags, logger=logger)
     try:
         http = credentials.authorize(httplib2.Http())
         service = discovery.build('calendar', 'v3', http=http)
         for body in bodys:
-            event = service.events().insert(calendarId=calendarId, body=body).execute()
+            event = service.events().insert(calendarId=calendarid, body=body).execute()
             logger.info('Event created: %s' % (event.get('htmlLink')))
     except Exception as e:
         logger.info('Error occured!')
