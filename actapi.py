@@ -17,6 +17,8 @@ except ImportError:
 # setting logger
 logger = src.Setup_Logger.Setup_Logger()
 
+developer_flag = False
+
 
 def main():
     mdid = None
@@ -28,18 +30,23 @@ def main():
 
     logger.info('Create Calendar events')
     time.sleep(0.1)
-    com = input('本日のテーブルデータを用いますか?(Do you use today\'s table data?) : (y/n) ')
-    if com == 'n':
+    if developer_flag is True:
+        com = input('本日のテーブルデータを用いますか?(Do you use today\'s table data?) : (y/n) ')
+        if com == 'n':
+            # get Nu info
+            mdid, pw, calendarid, club_name, activity_location = src.Setup_Config.Setup_Config(logger=logger)
+            src.AccessGymReservationSystem.access(mdid=mdid, pw=pw, activity_location=activity_location, logger=logger)
+        elif com == 'y':
+            table_path = input('テーブルデータのパスを入力して下さい.(Please input table data path.) : ')
+            calendarid, club_name, activity_location = src.Setup_Config.Setup_Config_non_idpw(logger=logger)
+        else:
+            logger.info('Your input command \"' + com + '\" is not defined.')
+            logger.info('Program quit.')
+            sys.exit()
+    else:
         # get Nu info
         mdid, pw, calendarid, club_name, activity_location = src.Setup_Config.Setup_Config(logger=logger)
         src.AccessGymReservationSystem.access(mdid=mdid, pw=pw, activity_location=activity_location, logger=logger)
-    elif com == 'y':
-        table_path = input('テーブルデータのパスを入力して下さい.(Please input table data path.) : ')
-        calendarid, club_name, activity_location = src.Setup_Config.Setup_Config_non_idpw(logger=logger)
-    else:
-        logger.info('Your input command \"' + com + '\" is not defined.')
-        logger.info('Program quit.')
-        sys.exit()
 
     time.sleep(0.1)
     bodys = src.CreateApi.create_api(club_name=club_name, activity_location=activity_location, logger=logger,
@@ -48,8 +55,7 @@ def main():
     for body in bodys:
         output_str = 'summary : ' + body['summary'] + ', start : ' + body['start']['dateTime'] + ', end : ' + \
                      body['end']['dateTime']
-        print(output_str.replace('\xe9', ''),
-              flush=True)
+        print(output_str.replace('\xe9', ''), flush=True)
     print('====================================', flush=True)
     com = input('この情報をあなたのカレンダーに追加しますか？(Do you add this information to your calendar?) : (y/n) ')
 

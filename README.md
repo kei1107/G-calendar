@@ -82,8 +82,10 @@ client_secret.jsonファイル(2. Setting Prerequisites-Google Account and api�
 Plese add client_secret.json(used in 2.Setting Prerequisites-Google Account and api) to G-calendar/json folder
 ### 3-3. Setting config
 G-calendar/config/settings.iniの情報を修正して下さい   
+※保存形式 : **UTF-8**
 
-Please modify information in G-calendar/config/settings.ini
+Please modify information in G-calendar/config/settings.ini  
+※Save style : **UTF-8**
 
 ## 4. Execute
 ```
