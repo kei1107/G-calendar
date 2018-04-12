@@ -97,6 +97,6 @@ $ python actapi.py
 プログラムを実行すると、[名古屋大学運動施設予約システム](http://133.6.82.138/undou/mudy0010c.php)にアクセスし、  
 **当月分** の予定に関して活動日を取得、カレンダーへの書き込みを行います。  
 
-When you run this program, this program access    
-[Nagoya Univ. sports facility reservation system](http://133.6.82.138/undou/mudy0010c.php) ,  
-and get activity schedules for this month. Then, the data is written to calendar.
+When you run this program, this program access [Nagoya Univ. sports facility  
+reservation system](http://133.6.82.138/undou/mudy0010c.php), and get activity schedules for this month.  
+Then, the data is written to calendar.
