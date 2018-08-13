@@ -380,7 +380,7 @@ def location5(trs, base_time, club_name):
 
 def location6(trs, base_time, club_name):
     bodys = []
-    location = {0: '(第１体育館/入り口側)', 1: '(第１体育館/奥側)'}
+    location = {0: '(第2体育館/入り口側)', 1: '(第2体育館/奥側)'}
     for i in range(0, len(trs), len(location)):
         for j in range(len(location)):
             tr = trs[i + j]
