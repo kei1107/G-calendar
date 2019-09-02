@@ -1,4 +1,4 @@
-# G-calendar
+# NagoyaUniv_ActivityCalendar
 
 [名古屋大学運動施設予約システム](http://133.6.82.138/undou/mudy0010c.php)から活動日を取得しGoogle Calendarに追加するプログラム  
 
@@ -35,18 +35,6 @@ Google Account and api
 日本語 ->  [Developers.IO](https://dev.classmethod.jp/cloud/google-calendar-api-get-start/)  
 English -> [G Suite](https://developers.google.com/calendar/quickstart/python)
 
-**Caution**  
-Step3:quickstart.py
-
-次のように書き換えて下さい  
-
-Please rewritten as follows
-```
-L.20
-SCOPES = 'https://www.googleapis.com/auth/calendar'
-```
-
-
 Python
 ---
 ```
@@ -72,19 +60,19 @@ Install Google Chrome and ChromeDriver
 ### 3-1. Clone or Download this repository
 ```
 [clone]
-$ git clone https://github.com/kei1107/G-calendar
+$ https://github.com/kei1107/NagoyaUniv_ActivityCalendar
 [download]
 click 'Clone or download' -> 'Download ZIP'
 ```
-### 3-2. add client_secret.json to G-calendar/json folder
-client_secret.jsonファイル(2. Setting Prerequisites-Google Account and apiで使用したもの)を G-calendar/jsonフォルダに加えて下さい。
+### 3-2. add client_secret.json to "json folder"
+client_secret.jsonファイル(2. Setting Prerequisites-Google Account and apiで使用したもの)を "jsonフォルダ"に加えて下さい。
 
-Plese add client_secret.json(used in 2.Setting Prerequisites-Google Account and api) to G-calendar/json folder
+Plese add client_secret.json(used in 2.Setting Prerequisites-Google Account and api) to "json folder"
 ### 3-3. Setting config
-G-calendar/config/settings.iniの情報を修正して下さい   
+config/settings.iniの情報を修正して下さい
 ※保存形式 : **UTF-8**
 
-Please modify information in G-calendar/config/settings.ini  
+Please modify information in config/settings.ini
 ※Save style : **UTF-8**
 
 ## 4. Execute
