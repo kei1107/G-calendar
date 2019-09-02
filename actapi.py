@@ -31,7 +31,7 @@ def main():
     logger.info('Create Calendar events')
     time.sleep(0.1)
     if developer_flag is True:
-        com = input('本日のテーブルデータを用いますか?(Do you use today\'s table data?) : (y/n) ')
+        com = input('最新のテーブルデータを用いますか?(Do you use today\'s table data?) : (y/n) ')
         if com == 'n':
             # get Nu info
             mdid, pw, calendarid, club_name, activity_location = src.Setup_Config.Setup_Config(logger=logger)
